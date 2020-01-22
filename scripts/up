@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# uname
+# pwd
+
+python -i
+
+# aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile default
+# aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default
+
+# aws --profile default configure get aws_access_key_id
+# aws --profile default configure get aws_secret_access_key

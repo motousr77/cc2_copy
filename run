@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# check for dDocker image exist !!!
+DOCKER_IMAGE_NAME=devcodemy/img_cc2:v1
+IMAGE_EXIST=false
+# docker images --format='{{json .}}' | jq -r '.Repository, .Tag'
+
+docker images --format='{{json .Repository}}:{{json .Tag}}' | tr -d \" > docker_images.txt
+
+readarray -t docker_img_arr < docker_images.txt
+
+for i in "${docker_img_arr[@]}"; do 
+  if [[ $i == DOCKER_IMAGE_NAME ]]; then
+    #statements
+    IMAGE_EXIST=true
+    echo "Docker image {$DOCKER_IMAGE_NAME} exist!"
+  fi;
+done
+
+# readarray -t git_url_arr < git_url.txt
+# for i in "${git_url_arr[@]}"; do git clone $i; done
+
+REPO_ROOT_DIR=$(pwd)
+
+for argument in $*
+do
+    case "$argument" in
+        -f) shift; VALUES_FILE=$1; shift;;
+        --action) shift; ACTION=$1; shift;;
+    esac
+done
+
+# AWS_ACCESS_KEY_ID=$(aws --profile default configure get aws_access_key_id)
+# AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_access_key)
+
+case $ACTION in
+     check)      
+          docker run -i --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns=1.1.1.1 -v ${REPO_ROOT_DIR}:/app -u $(id -u):$(id -g) --name cc2 $DOCKER_IMAGE_NAME /app/scripts/up
+          ;;
+     # destroy)
+     #      cat $VALUES_FILE | docker run -i --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns=1.1.1.1 -v ${REPO_ROOT_DIR}:/app -v ${REPO_ROOT_DIR_CLUSTERS}:/app/_clusters -u $(id -u):$(id -g) --name kubeup codefresh/kubeup /app/destroy
+     #      ;;
+     rebuild)
+          docker build -t $DOCKER_IMAGE_NAME ${REPO_ROOT_DIR}/dockerfiles
+          ;;
+     *)
+          # usage
+          ;;
+esac
+
