@@ -36,6 +36,7 @@ echo AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_acce
 
 export AWS_ACCESS_KEY_ID=AKIA2BHEQHAJOAYGSHIN
 export AWS_SECRET_ACCESS_KEY=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
+
 export RELATIVE_SCRIPT_DIR=$(dirname $0)
 mkdir -p ${RELATIVE_SCRIPT_DIR}/_clusters
 export REPO_ROOT_DIR="$(cd "${RELATIVE_SCRIPT_DIR}/k8s-aws-automation" && pwd)"
