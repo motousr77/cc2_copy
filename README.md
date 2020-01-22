@@ -1,3 +1,6 @@
+#### About this copy 
+This repository copied from other my repo named https://github.com/devcodemy/cc2
+
 ### Some kind of kubernetes cluster tool
 - firts of all i need to choose installation way
 - second i need to automate some of them (local[Vagrant], remote[Terraform])
