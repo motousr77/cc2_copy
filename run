@@ -53,14 +53,24 @@ case $ACTION in
           ;;
      # destroy)
      #      cat $VALUES_FILE | docker run -i --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns=1.1.1.1 -v ${REPO_ROOT_DIR}:/app -v ${REPO_ROOT_DIR_CLUSTERS}:/app/_clusters -u $(id -u):$(id -g) --name kubeup codefresh/kubeup /app/destroy
-     #      ;;
+     help)
+          echo ' --------------------------------------------------------------'
+          echo "For create cluster type:" && echo "  ./run -f values_file.yaml --action create" && echo
+          echo "For destroy cluster type:" && echo "  ./run -f values_file.yaml --action destroy" && echo
+          echo "For check environment type:" && echo "  ./run --action check" && echo
+          echo "For get help type:" && echo "./run --action help"
+          echo ' --------------------------------------------------------------'
+          ;;
      rebuild)
           # docker build -t $DOCKER_IMAGE_NAME ${REPO_ROOT_DIR}/dockerfiles
           rebuild
           ;;
      *)
           # usage
-          echo "default usage ./run --action *"
+          echo "default usage ./run --action * - Nothing to do!"
           ;;
 esac
 
+# . helper
+# ./run -f values.yaml --action create
+# ./run -f values.yaml --action destroy

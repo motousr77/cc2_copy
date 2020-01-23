@@ -12,6 +12,7 @@ aws configure --profile default && cat ~/.aws/*
 # ^ switch mode of command ./run and k8s-aws-automation/kubeup !!!
 chmod +x run
 chmod +x k8s-aws-automation/kubeup
+chmod +x k8s-aws-automation/destroy
 
 # ^ create cluster 
 ./run -f values.yaml --action create
@@ -28,11 +29,6 @@ sudo apt install aws-cli
 
 ### Test box
 ~~~bash
-
-# ^ X
-echo AWS_ACCESS_KEY_ID=$(aws --profile default configure get aws_access_key_id)
-echo AWS_SECRET_ACCESS_KEY=$(aws --profile default configure get aws_secret_access_key)
-
 
 export AWS_ACCESS_KEY_ID=NEWXXXXXXXXXXXXXXXX
 export AWS_SECRET_ACCESS_KEY=newyyyyyyyyyyyyyyyyyyyyyyyxxxxxxxxxx
@@ -81,65 +77,4 @@ fi
 sed 's/FIXME/TEST_AUTO_SCRIPT/g' values.yaml.example > values_step.yaml
 sed 's/cf-cd.com/devcodemy.net/g' values_step.yaml > values.yaml
 # check some case: sed 's/cf-cd.com/devcodemy.net/g' values.yaml
-~~~
-
-### Dockerfile
-~~~Dockerfile
-
-
-FROM alpine:3.9
-RUN apk --no-cache add python py-pip py-setuptools ruby ca-certificates \
-    curl groff less tar bash jq coreutils bind-tools openssl gettext libintl && \
-    pip --no-cache-dir install awscli && \
-    gem install rake erubis --no-ri --no-rdoc
-
-# Latest stable version: https://github.com/mikefarah/yq/releases/
-ENV YQ_VERSION 2.4.0
-RUN curl -LO https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
-    && chmod +x ./yq_linux_amd64 \
-    && mv ./yq_linux_amd64 /usr/bin/yq
-
-# Latest stable version: https://github.com/mozilla/sops/releases
-ENV SOPS_VERSION 3.3.0
-RUN wget -O sops https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux \
-    && chmod +x ./sops \
-    && mv ./sops /usr/bin/sops
-
-# Latest stable version: curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep tag_name | cut -d '"' -f 4 | tr --delete v
-ENV TERRAFORM_VERSION=0.11.13
-RUN curl -sSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-        -o /tmp/terraform.zip && \
-    unzip /tmp/terraform.zip -d /usr/bin && \
-    rm /tmp/terraform.zip
-
-# Latest stable version: curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
-ENV KUBECTL_VERSION v1.16.3
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
-    && chmod +x ./kubectl \
-    && mv ./kubectl /usr/bin/
-
-# Latest stable version: curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4
-ENV KOPS_VERSION 1.15.0
-RUN wget -O kops https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/kops-linux-amd64 \
-   && chmod +x ./kops \
-   && mv ./kops /usr/bin/
-
-# Latest stable version: https://github.com/helm/helm/releases
-ENV HELM_VERSION 2.14.3
-RUN curl -sSL https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz |tar xvz && \
-    mv linux-amd64/helm /usr/bin/helm && \
-    chmod +x /usr/bin/helm && rm -rf linux-amd64
-
-# Latest stable version: https://github.com/codefresh-io/cli/releases
-ENV CODEFRESH_CLI_VERSION v0.19.5
-RUN curl -sSL https://github.com/codefresh-io/cli/releases/download/${CODEFRESH_CLI_VERSION}/codefresh-${CODEFRESH_CLI_VERSION}-alpine-x64.tar.gz \ 
-    |tar xvz && mv ./codefresh /usr/bin/codefresh && \
-    rm -rf codefresh-${CODEFRESH_CLI_VERSION}-alpine-x64.tar.gz
-
-# Add the keys to access k8s cluster and set permissions
-ARG SSH_PUBLIC_KEY
-RUN echo "${SSH_PUBLIC_KEY}" > /tmp/id_rsa.pub
-
-WORKDIR /app
-CMD ["/bin/bash"]
 ~~~
